@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo_senha, medidor %}
+{% block titulo %}Minha conta{% endblock %}
+{% block conteudo %}
+<h1>Minha conta</h1>
+<div class="duas">
+  <section class="cartao">
+    <h2>Resumo</h2>
+    <dl class="lista-def">
+      <dt>Usuário</dt><dd>{{ eu.nome }}{% if eu.admin %} (administrador){% endif %}</dd>
+      <dt>Conta criada em</dt><dd>{{ criado_em or 'data não registrada' }}</dd>
+      <dt>Login anterior</dt><dd>{{ anterior or 'este é o primeiro login registrado' }}</dd>
+      <dt>Notas</dt><dd>{{ n_notas }}</dd>
+    </dl>
+  </section>
+  <form method="post" class="cartao" data-carregando="Salvando…">
+    <h2>Trocar senha</h2>
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    {{ campo_senha("atual", "Senha atual") }}
+    {{ campo_senha("nova", "Nova senha", novo=True, medir=True) }}
+    {{ medidor() }}
+    {{ campo_senha("confirma", "Repita a nova senha", novo=True) }}
+    <button class="botao largo" type="submit">Salvar nova senha</button>
+  </form>
+</div>
+{% endblock %}

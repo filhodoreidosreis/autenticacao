@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titulo %}Editar página{% endblock %}
+{% block conteudo %}
+<h1>Editar página pessoal</h1>
+<div class="duas">
+  <form method="post" class="cartao" data-carregando="Salvando…">
+    <h2>Apresentação</h2>
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <input type="hidden" name="acao" value="salvar">
+    <div class="campo"><label for="nome">Nome</label>
+      <input id="nome" name="nome" required maxlength="60" value="{{ perfil.nome }}"></div>
+    <div class="campo"><label for="curso">Curso</label>
+      <input id="curso" name="curso" required maxlength="80" value="{{ perfil.curso }}"></div>
+    <div class="campo"><label for="bio">Bio</label>
+      <textarea id="bio" name="bio" rows="5" required maxlength="600" data-max="600">{{ perfil.bio }}</textarea></div>
+    <button class="botao largo" type="submit">Salvar alterações</button>
+  </form>
+
+  <section class="cartao">
+    <h2>Habilidades</h2>
+    <ul class="lista-hab">
+      {% for h in habilidades %}
+      <li>{{ h.descricao }}
+        <form method="post" action="{{ url_for('habilidade_excluir', hab_id=h.id) }}" class="inline"
+              data-confirmar="Remover a habilidade “{{ h.descricao }}”?" data-confirmar-label="Remover">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <button class="botao perigo peq" type="submit">Remover</button>
+        </form>
+      </li>
+      {% else %}<li class="vazio">Nenhuma habilidade ainda. Adicione a primeira abaixo.</li>{% endfor %}
+    </ul>
+    <form method="post" class="linha-add">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <input type="hidden" name="acao" value="habilidade">
+      <label class="oculto" for="descricao">Nova habilidade</label>
+      <input id="descricao" name="descricao" placeholder="Nova habilidade" required maxlength="40">
+      <button class="botao" type="submit">Adicionar</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

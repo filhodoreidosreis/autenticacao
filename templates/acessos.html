@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block titulo %}Acessos{% endblock %}
+{% block conteudo %}
+<h1>Relatório de acessos</h1>
+<p class="mini">{% if eu.admin %}Como administrador, você vê as tentativas de todos os usuários.{% else %}Você vê só as suas tentativas de login.{% endif %}</p>
+
+<dl class="numeros grande">
+  <div><dt>Tentativas</dt><dd>{{ total }}</dd></div>
+  <div><dt>Falhas</dt><dd>{{ falhas }}</dd></div>
+  <div><dt>Taxa de falha</dt><dd>{{ ((falhas / total * 100)|round(0)|int) if total else 0 }}%</dd></div>
+</dl>
+
+<section class="cartao" aria-labelledby="t-grafico">
+  <h2 id="t-grafico">Últimos 7 dias</h2>
+  <div class="grafico" role="img" aria-label="Gráfico de barras com sucessos e falhas por dia nos últimos 7 dias">
+    {% for d in grafico %}
+      <div class="coluna" title="{{ d.rotulo }}: {{ d.ok }} sucesso(s), {{ d.falha }} falha(s)">
+       <div class="pilha"><i class="f" data-h="{{ d.h_falha }}"></i><i class="s" data-h="{{ d.h_ok }}"></i></div>
+        <span>{{ d.rotulo }}</span>
+      </div>
+    {% endfor %}
+  </div>
+  <p class="legenda"><span class="amostra s"></span> Sucesso <span class="amostra f"></span> Falha</p>
+</section>
+
+<section aria-labelledby="t-tabela">
+  <div class="cabeca-tabela">
+    <h2 id="t-tabela">Registros recentes</h2>
+    <p class="filtros">
+      {% for chave, nome in [('todos', 'Todos'), ('sucessos', 'Sucessos'), ('falhas', 'Falhas')] %}
+        <a class="filtro" href="{{ url_for('acessos', filtro=chave) }}" {% if filtro == chave %}aria-current="true"{% endif %}>{{ nome }}</a>
+      {% endfor %}
+      <a class="botao sec peq" href="{{ url_for('acessos_csv') }}">Baixar CSV</a>
+    </p>
+  </div>
+  <div class="tabela-wrap">
+    <table>
+      <thead><tr><th>Usuário</th><th>Data e hora</th><th>Resultado</th>{% if eu.admin %}<th>IP</th>{% endif %}</tr></thead>
+      <tbody>
+      {% for r in registros %}
+        <tr>
+          <td>{{ r.usuario }}</td><td>{{ r.data_hora }}</td>
+          <td><span class="selo {{ 'ok' if r.sucesso else 'falha' }}">{{ '✔ sucesso' if r.sucesso else '✖ falha' }}</span></td>
+          {% if eu.admin %}<td>{{ r.ip or '—' }}</td>{% endif %}
+        </tr>
+      {% else %}
+        <tr><td colspan="{{ 4 if eu.admin else 3 }}" class="vazio">Nenhum registro com esse filtro.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

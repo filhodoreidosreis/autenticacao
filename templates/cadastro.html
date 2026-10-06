@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo_senha, medidor %}
+{% block titulo %}Criar conta{% endblock %}
+{% block conteudo %}
+<section class="cartao estreito">
+  <h1>Criar conta</h1>
+  <form method="post" data-carregando="Criando conta…">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <div class="campo">
+      <label for="usuario">Usuário</label>
+      <input id="usuario" name="usuario" value="{{ usuario }}" required autofocus autocomplete="username"
+             minlength="3" maxlength="30" pattern="[A-Za-z0-9_]+" title="Letras, números e _">
+      <p class="mini">De 3 a 30 caracteres: letras, números e _.</p>
+    </div>
+    {{ campo_senha("senha", "Senha", novo=True, medir=True) }}
+    {{ medidor() }}
+    {{ campo_senha("confirma", "Repita a senha", novo=True) }}
+    <button class="botao largo" type="submit">Criar conta</button>
+  </form>
+  <p class="mini">Já tem conta? <a href="{{ url_for('login') }}">Entrar</a>.</p>
+  <p class="mini">Use apenas senhas fictícias nesta atividade.</p>
+</section>
+{% endblock %}

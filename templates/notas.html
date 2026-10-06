@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block titulo %}Minhas notas{% endblock %}
+{% block conteudo %}
+<h1>Minhas notas</h1>
+<div class="duas">
+  <form method="post" action="{{ url_for('nota_nova') }}" class="cartao nova" data-carregando="Salvando…">
+    <h2>Nova nota</h2>
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <div class="campo">
+      <label for="titulo">Título</label>
+      <input id="titulo" name="titulo" required maxlength="80" data-max="80">
+    </div>
+    <div class="campo">
+      <label for="categoria">Categoria</label>
+      <select id="categoria" name="categoria">
+        {% for c in categorias %}<option {% if c == cat %}selected{% endif %}>{{ c }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="campo">
+      <label for="texto">Texto</label>
+      <textarea id="texto" name="texto" rows="5" required maxlength="2000" data-max="2000"></textarea>
+    </div>
+    <button class="botao largo" type="submit">Salvar nota</button>
+  </form>
+
+  <section aria-label="Lista de notas">
+    <div class="barra-busca">
+      <label class="oculto" for="busca">Buscar nas notas</label>
+      <input id="busca" type="search" placeholder="Buscar nas notas (tecle / para focar)" autocomplete="off">
+      <span id="contagem" class="mini" aria-live="polite"></span>
+    </div>
+    <p class="filtros">
+      <a href="{{ url_for('notas') }}" class="filtro" {% if not cat %}aria-current="true"{% endif %}>Todas ({{ total }})</a>
+      {% for c in categorias %}
+        <a href="{{ url_for('notas', cat=c) }}" class="filtro" {% if c == cat %}aria-current="true"{% endif %}>{{ c }} ({{ contagem.get(c, 0) }})</a>
+      {% endfor %}
+    </p>
+
+    {% for n in notas %}
+    <article class="nota {{ 'fixada' if n.fixada }}" data-busca="{{ (n.titulo ~ ' ' ~ n.texto ~ ' ' ~ n.categoria)|lower }}">
+      <header>
+        <h3>{% if n.fixada %}<span title="Nota fixada" aria-label="Fixada">📌 </span>{% endif %}{{ n.titulo }}</h3>
+        <span class="tag">{{ n.categoria }}</span>
+      </header>
+      <p class="texto">{{ n.texto }}</p>
+      <footer>
+        <small>{{ n.criado_em }}{% if n.atualizado_em %} (editada em {{ n.atualizado_em }}){% endif %}</small>
+        <span class="acoes">
+          <form method="post" action="{{ url_for('nota_fixar', nota_id=n.id) }}" class="inline">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button class="botao sec peq" type="submit">{{ 'Desafixar' if n.fixada else 'Fixar' }}</button>
+          </form>
+          <a class="botao sec peq" href="{{ url_for('nota_editar', nota_id=n.id) }}">Editar</a>
+          <form method="post" action="{{ url_for('nota_excluir', nota_id=n.id) }}" class="inline"
+                data-confirmar="Excluir a nota “{{ n.titulo }}”? Isso não pode ser desfeito." data-confirmar-label="Excluir nota">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button class="botao perigo peq" type="submit">Excluir</button>
+          </form>
+        </span>
+      </footer>
+    </article>
+    {% else %}
+      <p class="vazio">{% if cat %}Nenhuma nota na categoria {{ cat }}. Escreva uma ao lado.{% else %}Você ainda não tem notas. Escreva a primeira ao lado.{% endif %}</p>
+    {% endfor %}
+    <p class="vazio" id="sem-resultado" hidden>Nenhuma nota combina com essa busca. Tente outra palavra.</p>
+  </section>
+</div>
+{% endblock %}

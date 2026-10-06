@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "macros.html" import campo_senha %}
+{% block titulo %}Entrar{% endblock %}
+{% block conteudo %}
+<section class="cartao estreito">
+  <h1>Entrar</h1>
+  <form method="post" data-carregando="Verificando…" {% if bloqueio %}data-bloqueio="{{ bloqueio }}"{% endif %}>
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <div class="campo">
+      <label for="usuario">Usuário</label>
+      <input id="usuario" name="usuario" value="{{ usuario }}" required autofocus autocomplete="username" maxlength="50">
+    </div>
+    {{ campo_senha("senha", "Senha") }}
+    <button class="botao largo" type="submit">Entrar</button>
+  </form>
+  <p class="mini">Ainda não tem conta? <a href="{{ url_for('cadastro') }}">Criar conta</a>.</p>
+  <p class="mini">Credencial fictícia da atividade: aluno_exemplo / Aula@1234</p>
+</section>
+{% endblock %}

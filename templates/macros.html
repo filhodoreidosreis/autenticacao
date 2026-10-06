@@ -1,0 +1,25 @@
+{% macro campo_senha(nome, rotulo, novo=False, medir=False) %}
+<div class="campo">
+  <label for="{{ nome }}">{{ rotulo }}</label>
+  <div class="senha-wrap">
+    <input id="{{ nome }}" name="{{ nome }}" type="password" required maxlength="128"
+           autocomplete="{{ 'new-password' if novo else 'current-password' }}"
+           {% if medir %}data-medidor{% endif %}>
+    <button type="button" class="botao sec peq" data-mostrar aria-pressed="false">Mostrar</button>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro medidor() %}
+<div class="medidor" data-medidor-box data-nivel="0">
+  <div class="barras" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <p data-medidor-texto>Use 8 ou mais caracteres, com letras e números.</p>
+</div>
+<details class="hash-demo" data-hash-demo hidden>
+  <summary>Ver o hash SHA-256 desta senha</summary>
+  <p>Calculado só no seu navegador, nada é enviado. Troque um caractere e veja quantos símbolos do hash mudam.</p>
+  <code data-hash-saida aria-live="off">—</code>
+  <p class="mini" data-hash-info></p>
+  <p class="mini">No servidor, a senha é guardada com PBKDF2 e um salt só dela, então o hash armazenado é diferente deste.</p>
+</details>
+{% endmacro %}

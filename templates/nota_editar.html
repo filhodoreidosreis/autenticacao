@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titulo %}Editar nota{% endblock %}
+{% block conteudo %}
+<section class="cartao estreito largo-md">
+  <h1>Editar nota</h1>
+  <form method="post" data-carregando="Salvando…">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <div class="campo">
+      <label for="titulo">Título</label>
+      <input id="titulo" name="titulo" required maxlength="80" data-max="80" value="{{ nota.titulo }}">
+    </div>
+    <div class="campo">
+      <label for="categoria">Categoria</label>
+      <select id="categoria" name="categoria">
+        {% for c in categorias %}<option {% if c == nota.categoria %}selected{% endif %}>{{ c }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="campo">
+      <label for="texto">Texto</label>
+      <textarea id="texto" name="texto" rows="8" required maxlength="2000" data-max="2000">{{ nota.texto }}</textarea>
+    </div>
+    <p class="linha-botoes"><button class="botao" type="submit">Salvar alterações</button>
+    <a class="botao sec" href="{{ url_for('notas') }}">Cancelar</a></p>
+  </form>
+</section>
+{% endblock %}

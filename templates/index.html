@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block titulo %}Início{% endblock %}
+{% block conteudo %}
+<section class="hero">
+  <div>
+    <h1>{{ perfil.nome }}</h1>
+    <p class="curso">{{ perfil.curso }}</p>
+    <p class="bio">{{ perfil.bio }}</p>
+    <ul class="chips" aria-label="Habilidades">
+      {% for h in habilidades %}<li>{{ h.descricao }}</li>{% else %}<li>Nenhuma habilidade cadastrada</li>{% endfor %}
+    </ul>
+    {% if eu and eu.admin %}<p><a class="botao sec" href="{{ url_for('perfil_editar') }}">Editar esta página</a></p>{% endif %}
+  </div>
+  <aside class="cartao lado">
+    <h2>Áreas restritas</h2>
+    {% if eu %}
+      <p>Você está logado como <strong>{{ eu.nome }}</strong> e tem {{ minhas }} {{ 'nota' if minhas == 1 else 'notas' }}.</p>
+      <p class="linha-botoes"><a class="botao" href="{{ url_for('notas') }}">Abrir minhas notas</a>
+      <a class="botao sec" href="{{ url_for('acessos') }}">Ver acessos</a></p>
+    {% else %}
+      <p>Notas pessoais e relatório de acessos só abrem depois do login.</p>
+      <p class="linha-botoes"><a class="botao" href="{{ url_for('login') }}">Entrar</a>
+      <a class="botao sec" href="{{ url_for('cadastro') }}">Criar conta</a></p>
+    {% endif %}
+    <dl class="numeros">
+      <div><dt>Visitas</dt><dd>{{ visitas }}</dd></div>
+      <div><dt>Contas</dt><dd>{{ n_contas }}</dd></div>
+      <div><dt>Notas</dt><dd>{{ n_notas }}</dd></div>
+    </dl>
+  </aside>
+</section>
+{% endblock %}
